@@ -6,6 +6,7 @@
 class HttpServer {
 public:
     bool initializeServer();
+    void startListening();
 
 private:
     SOCKET serverSocket = INVALID_SOCKET;

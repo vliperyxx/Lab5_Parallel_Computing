@@ -31,3 +31,18 @@ bool HttpServer::initializeServer() {
 
     return true;
 }
+
+void HttpServer::startListening() {
+    if (listen(serverSocket, SOMAXCONN) == SOCKET_ERROR) {
+        std::cout << "Listening socket failed: " << WSAGetLastError() << std::endl;
+        closesocket(serverSocket);
+        WSACleanup();
+        return;
+    }
+
+    std::cout << "Server started listening on port " << port << std::endl;
+
+    closesocket(serverSocket);
+    serverSocket = INVALID_SOCKET;
+    WSACleanup();
+}

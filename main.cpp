@@ -1,11 +1,10 @@
-#include <iostream>
+#include "HttpServer.h"
 
 int main() {
-    auto lang = "C++";
-    std::cout << "Hello and welcome to " << lang << "!\n";
+    HttpServer server;
 
-    for (int i = 1; i <= 5; i++) {
-        std::cout << "i = " << i << std::endl;
+    if (server.initializeServer()) {
+        server.startListening();
     }
 
     return 0;
