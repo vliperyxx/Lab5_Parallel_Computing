@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include "HttpServer.h"
 
 #pragma comment(lib, "ws2_32.lib")
@@ -28,6 +30,31 @@ bool HttpServer::initializeServer() {
         WSACleanup();
         return false;
     }
+
+    return true;
+}
+
+bool HttpServer::loadPages() {
+    std::ifstream indexFile("pages/index.html");
+    if (!indexFile) {
+        std::cout << "Failed to open index.html" << std::endl;
+        return false;
+    }
+    std::ostringstream ssIndex;
+    ssIndex << indexFile.rdbuf();
+    indexPageContent = ssIndex.str();
+
+    std::ifstream secondPageFile("pages/page2.html");
+    if (!secondPageFile) {
+        std::cout << "Failed to open page2.html" << std::endl;
+        return false;
+    }
+    std::ostringstream ssSecond;
+    ssSecond << secondPageFile.rdbuf();
+    secondPageContent = ssSecond.str();
+
+    badRequestContent = "<html><head><title>400 Bad Request</title></head><body><h1>400 - Bad Request</h1></body></html>";
+    errorPageContent = "<html><head><title>404 Not Found</title></head><body><h1>404 - Page Not Found</h1></body></html>";
 
     return true;
 }
