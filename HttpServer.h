@@ -11,6 +11,7 @@ public:
 
 private:
     void handleClient(SOCKET clientSocket);
+    void sendResponse(SOCKET clientSocket, const std::string& path);
 
     SOCKET serverSocket = INVALID_SOCKET;
     int port = 8080;

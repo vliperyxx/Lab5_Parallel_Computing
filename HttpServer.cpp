@@ -96,4 +96,35 @@ void HttpServer::startListening() {
 }
 
 void HttpServer::handleClient(SOCKET clientSocket) {
+    const int bufferSize = 4096;
+    char buffer[bufferSize];
+
+    int receivedBytes = recv(clientSocket, buffer, bufferSize, 0);
+    if (receivedBytes <= 0) {
+        closesocket(clientSocket);
+        return;
+    }
+
+    std::string request(buffer, receivedBytes);
+
+    std::istringstream requestStream(request);
+    std::string requestLine;
+    std::getline(requestStream, requestLine);
+
+    std::istringstream iss(requestLine);
+    std::string method, path, version;
+    iss >> method >> path >> version;
+
+    if (method == "GET") {
+        std::cout << "Request: " << method << " " << path << " " << version << std::endl;
+        sendResponse(clientSocket, path);
+    }
+    else {
+        std::cout << "Unsupported HTTP method: " << method << std::endl;
+    }
+
+    closesocket(clientSocket);
+}
+
+void HttpServer::sendResponse(SOCKET clientSocket, const std::string& path) {
 }
