@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <thread>
 #include "HttpServer.h"
 
 #pragma comment(lib, "ws2_32.lib")
@@ -68,8 +69,31 @@ void HttpServer::startListening() {
     }
 
     std::cout << "Server started listening on port " << port << std::endl;
+    isRunning = true;
+
+    while (isRunning) {
+        sockaddr_in clientAddress;
+        int clientAddressSize = sizeof(clientAddress);
+
+        SOCKET clientSocket = accept(serverSocket, reinterpret_cast<sockaddr*>(&clientAddress), &clientAddressSize);
+        if (clientSocket == INVALID_SOCKET) {
+            std::cout << "Failed to accept client connection: " << WSAGetLastError() << std::endl;
+            continue;
+        }
+
+        char* clientIp = inet_ntoa(clientAddress.sin_addr);
+        int clientPort = ntohs(clientAddress.sin_port);
+
+        std::cout << "Accepted connection from: " << clientIp << ":" << clientPort << std::endl;
+
+        std::thread clientThread(&HttpServer::handleClient, this, clientSocket);
+        clientThread.detach();
+    }
 
     closesocket(serverSocket);
     serverSocket = INVALID_SOCKET;
     WSACleanup();
+}
+
+void HttpServer::handleClient(SOCKET clientSocket) {
 }

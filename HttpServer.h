@@ -10,8 +10,11 @@ public:
     void startListening();
 
 private:
+    void handleClient(SOCKET clientSocket);
+
     SOCKET serverSocket = INVALID_SOCKET;
     int port = 8080;
+    bool isRunning = false;
 
     std::string indexPageContent;
     std::string secondPageContent;
