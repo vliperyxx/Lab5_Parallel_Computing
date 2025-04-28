@@ -3,7 +3,7 @@
 int main() {
     HttpServer server;
 
-    if (server.initializeServer()) {
+    if (server.initializeServer() && server.loadPages()) {
         server.startListening();
     }
 

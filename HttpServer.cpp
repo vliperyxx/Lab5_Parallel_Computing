@@ -127,4 +127,34 @@ void HttpServer::handleClient(SOCKET clientSocket) {
 }
 
 void HttpServer::sendResponse(SOCKET clientSocket, const std::string& path) {
+    std::string body;
+    std::string statusLine;
+
+    if (/*path == "/" ||*/ path == "/index.html") {
+        body = indexPageContent;
+        statusLine = "200 OK";
+    }
+    else if (path == "/second_page.html") {
+        body = secondPageContent;
+        statusLine = "200 OK";
+    }
+    else if (path.find("..") != std::string::npos || path.find("//") != std::string::npos || path.find("\\") != std::string::npos) {
+        body = badRequestContent;
+        statusLine = "400 Bad Request";
+    }
+    else {
+        body = errorPageContent;
+        statusLine = "404 Not Found";
+    }
+
+    std::string response =
+        "HTTP/1.1 " + statusLine + "\r\n" +
+        "Content-Type: text/html\r\n" +
+        "Content-Length: " + std::to_string(body.size()) + "\r\n" +
+        "\r\n" +
+        body;
+
+    send(clientSocket, response.c_str(), response.size(), 0);
+
+    std::cout << "Response status: " << statusLine << std::endl;
 }
